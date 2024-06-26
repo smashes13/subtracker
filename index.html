@@ -15,13 +15,21 @@
         const { useState, useEffect } = React;
 
         function SubscriptionTracker() {
-            const [subscriptions, setSubscriptions] = useState([
-                { id: 1, name: '', cost: 0, person: 'Ashley' },
-                { id: 2, name: '', cost: 0, person: 'George' },
-            ]);
+            const [subscriptions, setSubscriptions] = useState([]);
+
+            useEffect(() => {
+                const savedSubscriptions = localStorage.getItem('subscriptions');
+                if (savedSubscriptions) {
+                    setSubscriptions(JSON.parse(savedSubscriptions));
+                }
+            }, []);
+
+            useEffect(() => {
+                localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
+            }, [subscriptions]);
 
             const addSubscription = (person) => {
-                const newId = Math.max(...subscriptions.map(s => s.id)) + 1;
+                const newId = subscriptions.length > 0 ? Math.max(...subscriptions.map(s => s.id)) + 1 : 1;
                 setSubscriptions([...subscriptions, { id: newId, name: '', cost: 0, person }]);
             };
 
